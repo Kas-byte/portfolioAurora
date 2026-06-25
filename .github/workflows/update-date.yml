@@ -1,0 +1,21 @@
+name: Update deploy date
+on:
+  push:
+    branches: [ main ]
+jobs:
+  update-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update deploy date in HTML
+        run: |
+          TODAY=$(date +'%Y.%m.%d')
+          sed -i "s/last deployed [0-9]\{4\}\.[0-9]\{2\}\.[0-9]\{2\}/last deployed $TODAY/g" index.html
+          sed -i "s/last deployed [0-9]\{4\}\.[0-9]\{2\}\.[0-9]\{2\}/last deployed $TODAY/g" project-aurora.html
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Auto-update deploy date" || echo "No changes to commit"
+          git push
