@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kasturi — Backend Architecture & Infrastructure</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --bg:#06080a;
+  --bg-soft:#0a0d0b;
+  --surface:#0e1411;
+  --surface-2:#101713;
+  --line:rgba(24,184,137,.16);
+  --line-strong:rgba(24,184,137,.32);
+  --emerald-deep:#0e6b4f;
+  --emerald:#18b889;
+  --emerald-soft:#7fc7ad;
+  --amber:#ffb648;
+  --amber-dim:#a87833;
+  --amber-glow:rgba(255,182,72,.45);
+  --text:#eef1ef;
+  --muted:#8b9590;
+  --mono:'JetBrains Mono',monospace;
+  --serif:'Fraunces',serif;
+  --sans:'Inter',sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.65;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  top:-260px;
+  right:-260px;
+  width:680px;
+  height:680px;
+  background:radial-gradient(circle, rgba(255,182,72,.10) 0%, rgba(24,184,137,.06) 40%, transparent 72%);
+  z-index:-1;
+  pointer-events:none;
+}
+
+body::after{
+  content:'';
+  position:fixed;
+  bottom:-300px;
+  left:-200px;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle, rgba(14,107,79,.12) 0%, transparent 70%);
+  z-index:-1;
+  pointer-events:none;
+}
+
+.container{width:90%;max-width:1180px;margin:auto;}
+
+a{color:inherit;}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:4px;}
+
+/* ===== NAV ===== */
+nav{
+  position:sticky;top:0;z-index:999;
+  background:rgba(6,8,10,.85);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.nav-wrap{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 0;
+}
+.logo{
+  font-family:var(--serif);
+  font-style:italic;
+  font-weight:600;
+  font-size:1.5rem;
+  letter-spacing:.01em;
+  color:var(--text);
+  text-decoration:none;
+}
+.logo span{color:var(--emerald);}
+.brand-group{display:flex;align-items:center;gap:16px;}
+.nav-right{display:flex;align-items:center;gap:26px;}
+.nav-links{display:flex;align-items:center;gap:26px;}
+.nav-links > a{
+  text-decoration:none;color:var(--muted);
+  font-size:.92rem;letter-spacing:.02em;
+  transition:.25s;
+}
+.nav-links > a:hover{color:var(--text);}
+
+.cta-group{display:flex;align-items:center;gap:12px;}
+
+/* dropdown */
+.dropdown{position:relative;}
+.dropdown-toggle{
+  display:flex;align-items:center;gap:6px;
+  cursor:pointer;
+}
+.dropdown-toggle .arrow{font-size:.65rem;transition:.25s;}
+.dropdown:hover .dropdown-toggle .arrow{transform:rotate(180deg);color:var(--amber);}
+.dropdown-menu{
+  position:absolute;
+  top:160%;left:50%;
+  transform:translate(-50%,-6px);
+  min-width:160px;
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:10px;
+  padding:8px;
+  opacity:0;visibility:hidden;
+  transition:.22s;
+  box-shadow:0 14px 34px rgba(0,0,0,.55);
+  z-index:50;
+}
+.dropdown:hover .dropdown-menu,
+.dropdown-toggle:focus-visible + .dropdown-menu{
+  opacity:1;visibility:visible;transform:translate(-50%,0);
+}
+.dropdown-menu a{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;border-radius:6px;
+  font-family:var(--mono);font-size:.8rem;
+  color:var(--text);text-decoration:none;
+}
+.dropdown-menu a .tag{
+  font-size:.65rem;color:var(--amber);
+  border:1px solid rgba(255,182,72,.3);
+  padding:2px 7px;border-radius:10px;
+}
+.dropdown-menu a:hover{background:var(--surface-2);color:var(--emerald-soft);}
+
+.status-pill{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.75rem;
+  color:var(--emerald-soft);
+  border:1px solid var(--line-strong);
+  padding:6px 12px;border-radius:30px;
+  white-space:nowrap;
+}
+.dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 8px 2px var(--amber-glow);
+  animation:pulse 2.2s infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1;}
+  50%{opacity:.35;}
+}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 26px;
+  border-radius:8px;
+  text-decoration:none;
+  font-size:.92rem;
+  font-weight:600;
+  letter-spacing:.01em;
+  transition:.3s;
+  white-space:nowrap;
+}
+.btn-small{padding:10px 20px;font-size:.84rem;}
+.btn-primary{
+  background:var(--emerald);
+  color:#06120c;
+  border:1px solid var(--emerald);
+}
+.btn-primary:hover{
+  box-shadow:0 0 26px 4px rgba(24,184,137,.35), 0 0 40px 8px var(--amber-glow);
+  transform:translateY(-2px);
+}
+.btn-ghost{
+  border:1px solid var(--line-strong);
+  color:var(--text);
+}
+.btn-ghost:hover{
+  border-color:var(--amber-dim);
+  color:var(--amber);
+  box-shadow:0 0 18px 2px rgba(255,182,72,.18);
+}
+
+/* ===== HERO (text only, no image / no CTAs) ===== */
+.hero{
+  min-height:46vh;
+  display:flex;align-items:center;
+  padding:60px 0 30px;
+}
+.hero-inner{
+  max-width:760px;
+}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:.78rem;
+  letter-spacing:.12em;
+  color:var(--amber);
+  text-transform:uppercase;
+  margin-bottom:22px;
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{
+  content:'';width:18px;height:1px;background:var(--amber-dim);
+}
+
+.hero h1{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size:3.6rem;
+  line-height:1.08;
+  margin-bottom:26px;
+  color:var(--text);
+}
+.hero h1 em{
+  font-style:italic;
+  color:var(--emerald);
+}
+
+.role-line{
+  font-family:var(--mono);
+  font-size:1rem;
+  color:var(--emerald-soft);
+  min-height:28px;
+  display:flex;
+  align-items:center;
+}
+.role-line .prefix{color:var(--muted);margin-right:8px;}
+.cursor{
+  display:inline-block;
+  width:9px;height:1.1em;
+  background:var(--amber);
+  margin-left:4px;
+  box-shadow:0 0 8px 1px var(--amber-glow);
+  animation:blink 1s step-end infinite;
+}
+@keyframes blink{50%{opacity:0;}}
+
+/* ===== SECTION SHARED ===== */
+section{padding:64px 0;}
+.section-head{margin-bottom:40px;}
+.section-head .eyebrow{margin-bottom:14px;}
+.section-head h2{
+  font-family:var(--serif);
+  font-size:2.3rem;
+  font-weight:600;
+  color:var(--text);
+}
+.section-head p{
+  color:var(--muted);
+  max-width:560px;
+  margin-top:14px;
+}
+
+/* ===== ABOUT (image left, text right) ===== */
+.about-grid{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:60px;
+  align-items:start;
+}
+
+.about-visual{
+  position:relative;
+  display:flex;justify-content:center;
+}
+.glow-halo{
+  position:absolute;
+  width:300px;height:300px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,182,72,.28) 0%, rgba(24,184,137,.13) 45%, transparent 75%);
+  filter:blur(10px);
+  top:6%;
+  z-index:0;
+}
+.portrait-frame{
+  position:relative;
+  width:100%;
+  max-width:340px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid var(--line-strong);
+  background:var(--surface);
+  z-index:1;
+}
+.portrait-frame img{
+  width:100%;display:block;
+  filter:grayscale(100%) contrast(1.05);
+  mix-blend-mode:luminosity;
+}
+.hud-card{
+  position:absolute;
+  bottom:-22px;left:-22px;
+  background:rgba(10,14,12,.92);
+  border:1px solid var(--line-strong);
+  border-radius:10px;
+  padding:14px 18px;
+  font-family:var(--mono);
+  font-size:.72rem;
+  color:var(--emerald-soft);
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+  z-index:2;
+  backdrop-filter:blur(6px);
+}
+.hud-card .line1{color:var(--muted);margin-bottom:4px;}
+.hud-card .line2{display:flex;align-items:center;gap:6px;color:var(--amber);}
+
+.about-text h2{
+  font-family:var(--serif);font-size:2.1rem;margin-bottom:24px;color:var(--text);
+}
+.about-text p{color:var(--muted);margin-bottom:18px;}
+.about-text p strong{color:var(--text);font-weight:600;}
+
+/* ===== STACK LEDGER (used in Stack section) ===== */
+.stack-ledger{
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+.ledger-row{
+  display:grid;
+  grid-template-columns:90px 1fr 1.4fr;
+  gap:14px;
+  padding:16px 20px;
+  border-bottom:1px solid var(--line);
+  font-size:.88rem;
+}
+.ledger-row:last-child{border-bottom:none;}
+.ledger-row .cat{
+  font-family:var(--mono);
+  color:var(--amber-dim);
+  font-size:.72rem;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding-top:2px;
+}
+.ledger-row .tool{font-weight:600;color:var(--text);}
+.ledger-row .note{color:var(--muted);}
+
+/* ===== FEATURED WORK / PROJECT FILE ===== */
+.project-file{
+  border:1px solid var(--line-strong);
+  border-radius:18px;
+  background:var(--surface);
+  overflow:hidden;
+}
+.term-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 22px;
+  background:var(--surface-2);
+  border-bottom:1px solid var(--line);
+}
+.term-dots{display:flex;gap:8px;}
+.term-dots span{width:10px;height:10px;border-radius:50%;}
+.term-dots span:nth-child(1){background:var(--amber);box-shadow:0 0 6px var(--amber-glow);}
+.term-dots span:nth-child(2){background:var(--emerald);}
+.term-dots span:nth-child(3){background:#3a4440;}
+.term-path{
+  font-family:var(--mono);
+  font-size:.78rem;
+  color:var(--muted);
+}
+.term-path strong{color:var(--emerald-soft);}
+
+.project-body{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:0;
+}
+.project-main{padding:42px;}
+.status-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--amber);
+  border:1px solid rgba(255,182,72,.3);
+  padding:6px 12px;
+  border-radius:20px;
+  margin-bottom:22px;
+}
+.project-main h3{
+  font-family:var(--serif);
+  font-size:2.4rem;
+  font-weight:600;
+  margin-bottom:16px;
+  color:var(--text);
+}
+.project-main p{color:var(--muted);margin-bottom:26px;max-width:480px;}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px;}
+.tag-row span{
+  font-family:var(--mono);
+  font-size:.76rem;
+  color:var(--emerald-soft);
+  border:1px solid var(--line-strong);
+  padding:6px 12px;
+  border-radius:20px;
+}
+
+.project-aside{
+  border-left:1px solid var(--line);
+  padding:42px;
+  background:var(--surface-2);
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.aside-stat{margin-bottom:24px;}
+.aside-stat .k{
+  font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;
+}
+.aside-stat .v{font-family:var(--serif);font-size:1.3rem;color:var(--text);}
+
+/* ===== CONTACT ===== */
+.contact-box{
+  border:1px solid var(--line-strong);
+  border-radius:18px;
+  padding:60px;
+  text-align:center;
+  background:radial-gradient(circle at 50% 0%, rgba(255,182,72,.07), transparent 60%);
+}
+.contact-box h2{
+  font-family:var(--serif);
+  font-size:2.2rem;
+  margin-bottom:16px;
+}
+.contact-box p{color:var(--muted);margin-bottom:32px;}
+.email-link{
+  font-family:var(--mono);
+  font-size:1.05rem;
+  color:var(--emerald-soft);
+  display:inline-block;
+  padding-bottom:4px;
+  border-bottom:1px dashed var(--line-strong);
+  text-decoration:none;
+  transition:.3s;
+}
+.email-link:hover{color:var(--amber);border-color:var(--amber-dim);}
+
+/* ===== FOOTER ===== */
+footer{
+  padding:40px 0;
+  border-top:1px solid var(--line);
+}
+.footer-row{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+}
+.footer-row .deploy-line{
+  font-family:var(--mono);font-size:.76rem;color:var(--muted);
+}
+.social-links{display:flex;gap:22px;}
+.social-links a{
+  text-decoration:none;font-size:.88rem;font-weight:600;color:var(--emerald-soft);
+}
+.social-links a:hover{color:var(--amber);}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .hero h1{font-size:2.5rem;}
+  .about-grid{grid-template-columns:1fr;gap:34px;}
+  .project-body{grid-template-columns:1fr;}
+  .project-aside{border-left:none;border-top:1px solid var(--line);}
+  .nav-links{display:none;}
+  .status-pill{display:none;}
+  .ledger-row{grid-template-columns:70px 1fr;}
+  .ledger-row .note{grid-column:1/-1;margin-top:4px;}
+  .contact-box{padding:36px 24px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .dot,.cursor{animation:none;}
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-wrap">
+    <div class="brand-group">
+      <a href="/" class="logo">KAST<span>U</span>RI</a>
+      <div class="status-pill"><span class="dot"></span> open to projects</div>
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#stack">Stack</a>
+      </div>
+      <div class="cta-group">
+        <div class="dropdown">
+          <a href="#work" class="dropdown-toggle btn btn-ghost btn-small">Projects <span class="arrow">▾</span></a>
+          <div class="dropdown-menu">
+            <a href="/project-aurora">Aurora <span class="tag">building</span></a>
+          </div>
+        </div>
+        <a href="#contact" class="btn btn-primary btn-small">Get in touch</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="eyebrow">Backend Architecture &amp; Infrastructure</div>
+    <h1>Systems built to<br><em>hold weight.</em></h1>
+    <div class="role-line">
+      <span class="prefix">$</span><span id="typing"></span><span class="cursor"></span>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="about-visual">
+        <div class="glow-halo"></div>
+        <div class="portrait-frame">
+          <img src="hero_pic.png" alt="Hero Picture">
+        </div>
+      </div>
+
+      <div class="about-text">
+        <div class="eyebrow">About</div>
+        <h2>Tech by trade,<br>creative by instinct.</h2>
+        <p>
+          I'm an <strong>IT freelancer</strong> who works on the backend
+          half of the internet — Linux servers, Docker environments,
+          DNS architecture, and the deployment pipelines that keep all
+          of it running without drama.
+        </p>
+        <p>
+          I lean toward building in public. Every project here links out
+          to the actual writeups and decisions made along the way, not
+          just a finished screenshot — because the process is usually the
+          more interesting part.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Featured Work</div>
+      <h2>Currently in the workshop.</h2>
+      <p>One project, fully open. As more ship, they'll line up here in order.</p>
+    </div>
+
+    <div class="project-file">
+      <div class="term-header">
+        <div class="term-dots"><span></span><span></span><span></span></div>
+        <div class="term-path"><strong>~/projects</strong>/aurora — status: in_progress</div>
+      </div>
+
+      <div class="project-body">
+        <div class="project-main">
+          <div class="status-badge"><span class="dot" style="width:6px;height:6px;"></span> In Progress</div>
+          <h3>Aurora</h3>
+          <p>
+            A SaaS product being built from the ground up — backend
+            architecture, infrastructure, and SEO-driven growth,
+            documented as it happens rather than shown only once finished.
+          </p>
+          <div class="tag-row">
+            <span>SaaS</span><span>Linux</span><span>Caddy</span>
+            <span>Cloudflare</span><span>DNS</span><span>SEO</span>
+          </div>
+          <a href="/project-aurora" class="btn btn-primary">Open project file →</a>
+        </div>
+
+        <div class="project-aside">
+          <div>
+            <div class="aside-stat">
+              <div class="k">Type</div>
+              <div class="v">SaaS Platform</div>
+            </div>
+            <div class="aside-stat">
+              <div class="k">Focus</div>
+              <div class="v">Infra + SEO</div>
+            </div>
+            <div class="aside-stat">
+              <div class="k">Status</div>
+              <div class="v" style="color:var(--amber);">Building</div>
+            </div>
+          </div>
+          <a href="/project-aurora" style="font-family:var(--mono);font-size:.8rem;color:var(--emerald-soft);text-decoration:none;">
+            view devlog &amp; links →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Tech Stack</div>
+      <h2>What's running underneath.</h2>
+    </div>
+
+    <div class="stack-ledger">
+      <div class="ledger-row"><div class="cat">OS</div><div class="tool">Linux</div><div class="note">Daily driver for servers and dev environments</div></div>
+      <div class="ledger-row"><div class="cat">Containers</div><div class="tool">Docker</div><div class="note">Isolated, reproducible deployments</div></div>
+      <div class="ledger-row"><div class="cat">Web Server</div><div class="tool">Caddy</div><div class="note">Reverse proxy + automatic HTTPS</div></div>
+      <div class="ledger-row"><div class="cat">DNS / CDN</div><div class="tool">Cloudflare</div><div class="note">DNS management, edge caching, protection</div></div>
+      <div class="ledger-row"><div class="cat">VCS</div><div class="tool">Git</div><div class="note">Version control across every project</div></div>
+      <div class="ledger-row"><div class="cat">Frontend</div><div class="tool">HTML / CSS / JS</div><div class="note">Lightweight, dependency-free builds</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <div class="contact-box">
+      <h2>Let's build something.</h2>
+      <p>Open to backend, infrastructure, and deployment work.</p>
+      <a href="mailto:kasturi@inspiraartsdesign.com" class="email-link">kasturi@inspiraartsdesign.com</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-row">
+    <div class="deploy-line">// tech.inspiraartsdesign.com — last deployed 2026.06.24</div>
+    <div class="social-links">
+      <a href="https://github.com/Kas-byte" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/kasturi-n-792b39283/" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const roles = [
+  "infrastructure --watch",
+  "deploying aurora",
+  "docker compose up",
+  "open to new projects"
+];
+let ri=0, ci=0;
+const typing = document.getElementById("typing");
+function type(){
+  if(ci < roles[ri].length){
+    typing.textContent += roles[ri].charAt(ci);
+    ci++;
+    setTimeout(type, 70);
+  } else {
+    setTimeout(erase, 1800);
+  }
+}
+function erase(){
+  if(ci > 0){
+    typing.textContent = roles[ri].substring(0, ci-1);
+    ci--;
+    setTimeout(erase, 35);
+  } else {
+    ri = (ri+1) % roles.length;
+    setTimeout(type, 300);
+  }
+}
+type();
+</script>
+
+</body>
+</html>

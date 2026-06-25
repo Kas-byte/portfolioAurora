@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurora — Project File | Kasturi</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --bg:#06080a;
+  --surface:#0e1411;
+  --surface-2:#101713;
+  --line:rgba(24,184,137,.16);
+  --line-strong:rgba(24,184,137,.32);
+  --emerald:#18b889;
+  --emerald-soft:#7fc7ad;
+  --amber:#ffb648;
+  --amber-dim:#a87833;
+  --amber-glow:rgba(255,182,72,.45);
+  --text:#eef1ef;
+  --muted:#8b9590;
+  --mono:'JetBrains Mono',monospace;
+  --serif:'Fraunces',serif;
+  --sans:'Inter',sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.65;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;top:-260px;right:-260px;
+  width:680px;height:680px;
+  background:radial-gradient(circle, rgba(255,182,72,.10) 0%, rgba(24,184,137,.06) 40%, transparent 72%);
+  z-index:-1;pointer-events:none;
+}
+
+.container{width:90%;max-width:1100px;margin:auto;}
+a{color:inherit;}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:4px;}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:999;
+  background:rgba(6,8,10,.85);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.nav-wrap{display:flex;justify-content:space-between;align-items:center;padding:18px 0;}
+.back-link{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.85rem;
+  text-decoration:none;color:var(--muted);
+  transition:.25s;
+}
+.back-link:hover{color:var(--amber);}
+.logo{font-family:var(--serif);font-style:italic;font-weight:600;font-size:1.3rem;}
+.logo span{color:var(--emerald);}
+
+/* HEADER */
+.project-hero{padding:80px 0 50px;}
+.eyebrow{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;
+  color:var(--amber);text-transform:uppercase;
+  margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:'';width:18px;height:1px;background:var(--amber-dim);}
+
+.title-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:18px;}
+.title-row h1{font-family:var(--serif);font-weight:600;font-size:3.2rem;}
+.status-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--amber);border:1px solid rgba(255,182,72,.3);
+  padding:7px 14px;border-radius:20px;
+}
+.dot{
+  width:7px;height:7px;border-radius:50%;background:var(--amber);
+  box-shadow:0 0 8px 2px var(--amber-glow);animation:pulse 2.2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+.tagline{color:var(--muted);max-width:600px;font-size:1.05rem;}
+
+/* MEDIA */
+.media-frame{
+  margin:50px 0;
+  border:1px solid var(--line-strong);
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--surface);
+}
+.media-term{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;background:var(--surface-2);border-bottom:1px solid var(--line);
+}
+.term-dots{display:flex;gap:8px;}
+.term-dots span{width:9px;height:9px;border-radius:50%;}
+.term-dots span:nth-child(1){background:var(--amber);}
+.term-dots span:nth-child(2){background:var(--emerald);}
+.term-dots span:nth-child(3){background:#3a4440;}
+.media-term .label{font-family:var(--mono);font-size:.74rem;color:var(--muted);}
+
+.video-placeholder{
+  aspect-ratio:16/9;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:14px;
+  background:
+    repeating-linear-gradient(45deg, rgba(24,184,137,.03) 0 2px, transparent 2px 14px);
+  position:relative;
+}
+.play-btn{
+  width:64px;height:64px;border-radius:50%;
+  border:1px solid var(--line-strong);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--amber);
+  box-shadow:0 0 24px 4px rgba(255,182,72,.12);
+}
+.video-placeholder .note{
+  font-family:var(--mono);font-size:.78rem;color:var(--muted);
+}
+
+/* CONTENT */
+.content-grid{
+  display:grid;grid-template-columns:1.3fr .7fr;gap:60px;
+  padding:30px 0 60px;
+}
+.block{margin-bottom:42px;}
+.block h2{
+  font-family:var(--serif);font-size:1.5rem;margin-bottom:14px;color:var(--text);
+}
+.block p{color:var(--muted);margin-bottom:14px;}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:10px;}
+.tag-row span,
+.pill-link{
+  font-family:var(--mono);font-size:.76rem;color:var(--emerald-soft);
+  border:1px solid var(--line-strong);padding:6px 12px;border-radius:20px;
+}
+.pill-link{
+  display:inline-flex;align-items:center;
+  text-decoration:none;transition:.3s;
+}
+.pill-link:hover{color:var(--amber);border-color:var(--amber-dim);}
+
+
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:28px;}
+.side-card{
+  border:1px solid var(--line);border-radius:12px;
+  padding:24px;background:var(--surface);
+}
+.side-card .k{
+  font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;
+}
+.side-card .v{font-family:var(--serif);font-size:1.15rem;color:var(--text);}
+
+.link-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:14px 18px;border-radius:10px;
+  border:1px solid var(--line-strong);text-decoration:none;
+  font-family:var(--mono);font-size:.85rem;color:var(--text);
+  margin-bottom:12px;transition:.3s;
+}
+.link-btn:hover{border-color:var(--amber-dim);color:var(--amber);box-shadow:0 0 16px 2px rgba(255,182,72,.14);}
+.link-btn.disabled{opacity:.4;pointer-events:none;}
+
+/* DEVLOG */
+.devlog{padding:60px 0 100px;}
+.section-head{margin-bottom:46px;}
+.section-head h2{font-family:var(--serif);font-size:2rem;margin-bottom:10px;}
+.section-head p{color:var(--muted);max-width:560px;}
+
+.timeline{position:relative;padding-left:28px;border-left:1px solid var(--line-strong);}
+.entry{position:relative;padding-bottom:36px;}
+.entry:last-child{padding-bottom:0;}
+.entry::before{
+  content:'';position:absolute;left:-33px;top:4px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--emerald);border:2px solid var(--bg);
+  box-shadow:0 0 0 2px var(--line-strong);
+}
+.entry .date{
+  font-family:var(--mono);font-size:.74rem;color:var(--amber-dim);
+  margin-bottom:6px;display:block;
+}
+.entry .note{color:var(--text);margin-bottom:8px;}
+.entry a{
+  font-family:var(--mono);font-size:.78rem;color:var(--emerald-soft);
+  text-decoration:none;
+}
+.entry a:hover{color:var(--amber);}
+
+/* FOOTER */
+footer{padding:40px 0;border-top:1px solid var(--line);}
+.footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.deploy-line{font-family:var(--mono);font-size:.76rem;color:var(--muted);}
+.social-links{display:flex;gap:22px;}
+.social-links a{text-decoration:none;font-size:.88rem;font-weight:600;color:var(--emerald-soft);}
+.social-links a:hover{color:var(--amber);}
+
+@media(max-width:900px){
+  .title-row h1{font-size:2.2rem;}
+  .content-grid{grid-template-columns:1fr;}
+}
+@media (prefers-reduced-motion: reduce){
+  .dot{animation:none;}
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-wrap">
+    <a href="/" class="back-link">← back to <span class="logo">KAST<span>U</span>RI</span></a>
+  </div>
+</nav>
+
+<section class="project-hero">
+  <div class="container">
+    <div class="eyebrow">Project File — 01</div>
+    <div class="title-row">
+      <h1>Aurora</h1>
+      <div class="status-badge"><span class="dot"></span> In Progress</div>
+    </div>
+    <p class="tagline">
+      A SaaS platform built end to end — backend architecture, hosting
+      infrastructure, and SEO-driven growth — with the build documented
+      in public as it happens.
+    </p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="media-frame">
+    <div class="media-term">
+      <div class="term-dots"><span></span><span></span><span></span></div>
+      <div class="label">aurora-demo.mp4</div>
+    </div>
+    <div class="video-placeholder">
+      <!-- TODO: replace this block with an actual <video> or embedded player once a demo exists -->
+      <div class="play-btn">▶</div>
+      <div class="note">demo walkthrough — coming soon</div>
+    </div>
+  </div>
+</div>
+
+<div class="container content-grid">
+  <div class="main-col">
+    <div class="block">
+      <h2>The problem</h2>
+      <p>
+        Modern organizations increasingly rely on specialized SaaS platforms
+        to support different stages of the customer journey.
+        While operationally efficient, this creates a significant
+        infrastructure challenge: unifying multiple independently
+        hosted applications behind a single domain.
+
+        Traditional DNS was never designed for path-level traffic orchestration.
+        Without an intelligent routing layer, subpaths can collide,
+        user journeys become fragmented, and valuable SEO authority
+        is diluted across disconnected services. Solving this challenge
+        requires more than domain configuration, as it demands an architecture
+        capable of routing, coordinating, and scaling disparate platforms as a cohesive digital experience.
+
+      </p>
+    </div>
+    <div class="block">
+      <h2>The approach</h2>
+      <p>
+        To validate the architecture, I built Aurora Yindi, a live luxury boutique
+        proof-of-concept spanning multiple SaaS platforms. The homepage is hosted on ConvertKit,
+        while the sales funnel is served from Carrd, reflecting a common platform fragmentation challenge.
+        Both platforms operate on their free-tier plans, reflecting the budget constraints often faced by startups
+        and small businesses.
+        <br><br>
+        Using Cloudflare Workers as an edge-routing layer, I unified these independently hosted applications
+        behind a single domain. Requests are intercepted at the network edge and dynamically routed to the
+        appropriate platform, creating a seamless user experience without exposing underlying platform boundaries.
+        <br><br>
+        The implementation includes custom proxy and header management to address cross-platform compatibility
+        while supporting metadata consistency and proper SEO indexing in Google Search Console.
+        <br><br>
+        <span style="color:var(--amber);">Live Application:</span>
+        <a href="https://aurora.99228811.xyz" target="_blank" rel="noopener noreferrer" class="pill-link">aurora.99228811.xyz</a>
+        <br><br>
+        <span style="color:var(--amber);">Conversion Path:</span>
+        <a href="https://aurora.99228811.xyz/sales" target="_blank" rel="noopener noreferrer" class="pill-link">aurora.99228811.xyz/sales</a>
+
+      </p>
+    </div>
+    <div class="block">
+      <h2>Where it stands</h2>
+      <p>
+        Core infrastructure is live; product features and SEO tooling
+        are actively in progress. This page — and the devlog below —
+        will keep updating as Aurora moves forward.
+      </p>
+    </div>
+    <div class="block">
+      <h2>Stack</h2>
+      <div class="tag-row">
+        <span>SaaS</span><span>Linux</span><span>Caddy</span>
+        <span>Cloudflare</span><span>DNS</span><span>SEO</span><span>Git</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="side-card">
+      <div class="k">Type</div>
+      <div class="v">SaaS Platform</div>
+    </div>
+    <div class="side-card">
+      <div class="k">Role</div>
+      <div class="v">Backend &amp; Infra</div>
+    </div>
+    <div class="side-card">
+      <div class="k">Status</div>
+      <div class="v" style="color:var(--amber);">Building</div>
+    </div>
+
+    <div>
+      <!-- TODO: swap href values below once GitHub repo is public / LinkedIn posts exist -->
+      <a href="https://github.com/Kas-byte" target="_blank" class="link-btn">GitHub repo <span>↗</span></a>
+      <a href="https://www.linkedin.com/in/kasturi-n-792b39283/" target="_blank" class="link-btn">LinkedIn updates <span>↗</span></a>
+    </div>
+  </div>
+</div>
+
+<section class="devlog">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Devlog</div>
+      <h2>Built in public.</h2>
+      <p>Each entry links to the LinkedIn post documenting that step of the build.</p>
+    </div>
+
+    <div class="timeline">
+      <!-- TODO: replace these placeholder entries with real devlog posts as they happen -->
+      <div class="entry">
+        <span class="date">2026.05 — entry 03</span>
+        <p class="note">Debugging edge routing anomalies: Fixing multi-platform asset delivery and edge-level SEO indexing.</p>
+        <a href="https://www.linkedin.com/posts/kasturi-n-792b39283_grabbed-my-teh-o-and-just-sat-there-confused-share-7463820773045141504-zA01/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEULqB4Bdv8GV0LcXtzVj059Mo82ht0aj0k" target="_blank">View LinkedIn post →</a>
+      </div>
+      <div class="entry">
+        <span class="date">2026.05 — entry 02</span>
+        <p class="note">Unifying disparate SaaS platforms at the edge using Cloudflare Workers routing logic.</p>
+        <a href="https://www.linkedin.com/posts/kasturi-n-792b39283_convertkit-carrd-cloudflareworkers-ugcPost-7451264199915347968-LhUK/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEULqB4Bdv8GV0LcXtzVj059Mo82ht0aj0k" target="_blank">View LinkedIn post →</a>
+      </div>
+      <div class="entry">
+        <span class="date">2026.04 — entry 01</span>
+        <p class="note">When a domain lives in two different malls: Proposing subdomain vs. reverse proxy routing.</p>
+        <a href="https://www.linkedin.com/posts/kasturi-n-792b39283_was-browsing-upwork-the-other-day-when-i-share-7442460097559146498-Pnbm/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEULqB4Bdv8GV0LcXtzVj059Mo82ht0aj0k" target="_blank">View LinkedIn post →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-row">
+    <div class="deploy-line">// tech.inspiraartsdesign.com — last deployed 2026.06.24</div>
+    <div class="social-links">
+      <a href="https://github.com/Kas-byte" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/kasturi-n-792b39283/" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
